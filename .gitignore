@@ -1,0 +1,139 @@
+# ─── Python ─────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+build/
+dist/
+sdist/
+wheels/
+pip-wheel-metadata/
+.eggs/
+
+# ─── Virtual environments ───────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ─── Local data / runtime ───────────────────────────
+.aio-local/
+data/
+.planning/
+.all-in-one/
+profiles/
+quota_cache/
+backups/
+state.json
+state.antigravity.json
+alerts.antigravity.json
+app_storage.json
+keyring.lock
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+*.db
+*.db-shm
+*.db-wal
+*.vscdb
+*.vscdb.backup
+*.bak
+*.backup
+*.dump
+
+# ─── Geliştirici / debug script'leri ───────────────
+scripts/
+
+# ─── IDE / Editor ───────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ─── OS ─────────────────────────────────────────────
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ─── Test / coverage ────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# ─── Local config / secrets ─────────────────────────
+.env
+.env.*
+*.env
+.envrc
+*.local.json
+secrets.*
+credentials.*
+credential.*
+client_secret*.json
+service-account*.json
+service_account*.json
+token.*
+tokens.*
+auth.json
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+.netrc
+.npmrc
+.pypirc
+.git-credentials
+.ssh/
+.gnupg/
+.aws/
+.azure/
+.config/
+.local/
+.cache/
+.mozilla/
+.pki/
+
+# ─── Browser sessions / private captures ────────────
+*[Cc]ookies*
+Login Data
+Login Data-*
+Local State
+History
+History-*
+Web Data
+Web Data-*
+logins.json
+key3.db
+key4.db
+sessionstore*
+storage-state*.json
+storage_state*.json
+storageState*.json
+browser-profile*/
+browser_profile*/
+user-data*/
+user_data*/
+playwright/.auth/
+*.har
+*.pcap
+*.pcapng
+captures/
+screenshots/
+recordings/

@@ -1,0 +1,57 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "all-in-one"
+version = "0.4.1"
+description = "Linux Antigravity / Gemini hesap yöneticisi - keyring tabanlı profil geçişi, kota izleme ve uyarılar"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["antigravity", "gemini", "google", "quota", "account-manager", "keyring", "linux"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development",
+    "Topic :: Utilities",
+]
+dependencies = [
+    "click>=8.1",
+    "rich>=13.7",
+    "psutil>=5.9",
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "pydantic>=2.6",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "ruff>=0.8"]
+
+[project.urls]
+Homepage = "https://github.com/voidvenom/all-in-one"
+Repository = "https://github.com/voidvenom/all-in-one"
+Issues = "https://github.com/voidvenom/all-in-one/issues"
+
+[project.scripts]
+aio = "aio.cli:main"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aio*"]
+
+[tool.setuptools.package-data]
+aio = ["web/index.html", "web/static/app.css", "web/static/app.js"]

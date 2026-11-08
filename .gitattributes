@@ -1,0 +1,32 @@
+# Default: text dosyalarda repo icinde LF kullan, checkout'ta OS native.
+* text=auto eol=lf
+
+# Açıkça text
+*.py     text eol=lf
+*.html   text eol=lf
+*.css    text eol=lf
+*.js     text eol=lf
+*.json   text eol=lf
+*.md     text eol=lf
+*.toml   text eol=lf
+*.yml    text eol=lf
+*.yaml   text eol=lf
+*.cfg    text eol=lf
+*.txt    text eol=lf
+
+# Windows-only batch dosyaları CRLF
+*.bat    text eol=crlf
+*.cmd    text eol=crlf
+
+# Binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.otf    binary
+*.zip    binary
+*.gz     binary

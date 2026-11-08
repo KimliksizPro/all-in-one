@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+if [ -x "$ROOT/.venv/bin/aio" ]; then
+  exec "$ROOT/.venv/bin/aio" "$@"
+fi
+exec python3 -m aio.cli "$@"

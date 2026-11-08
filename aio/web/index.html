@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <title>all-in-one · Antigravity</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%2372a7ff'/%3E%3Ctext x='32' y='45' font-size='40' font-family='sans-serif' font-weight='700' text-anchor='middle' fill='%2306111f'%3Ea%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mark" aria-hidden="true">a</div>
+        <div class="brand-text">
+          <h1>all-in-one</h1>
+          <p>Antigravity hesap &amp; kota merkezi</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span id="conn" class="conn off"><i></i><span>Bağlanıyor</span></span>
+        <span id="server-version" class="server-version" title="Bu sayfaya yanıt veren sunucunun sürümü">Sunucu: —</span>
+        <label class="theme-control"><span class="sr-only">Görünüm</span><select id="theme-select" aria-label="Görünüm"><option value="auto">Sistem teması</option><option value="light">Açık tema</option><option value="dark">Koyu tema</option></select></label>
+        <button id="refresh-btn" class="btn btn-ghost" title="Kotaları yenile (R)">Yenile</button>
+        <button id="settings-btn" class="btn btn-ghost" title="Ayarlar">Ayarlar</button>
+      </div>
+    </header>
+
+    <main>
+      <div id="alert-banner" class="alert-banner hidden" aria-live="polite"></div>
+      <div id="operation-status" class="operation-status hidden" role="status" aria-live="polite"></div>
+      <div id="refresh-progress" class="progress hidden" role="progressbar" aria-label="Kota yenileme" aria-valuemin="0" aria-valuemax="100"><i></i></div>
+
+      <section class="summary" aria-label="Özet">
+        <div class="stat">
+          <span class="stat-label">Hesap</span>
+          <strong id="stat-accounts">—</strong>
+          <small id="stat-primary">—</small>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Canlı oturum</span>
+          <strong id="stat-live" class="ellipsis">—</strong>
+          <small id="stat-live-sub">—</small>
+        </div>
+        <div class="stat">
+          <span class="stat-label">En düşük kota</span>
+          <strong id="stat-low">—</strong>
+          <small id="stat-low-sub">—</small>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Uyarı</span>
+          <strong id="stat-alerts">—</strong>
+          <small id="stat-refresh">—</small>
+        </div>
+      </section>
+
+      <section id="warnings" class="warning-stack hidden" aria-live="polite"></section>
+      <section id="login-banner" class="login-banner hidden" aria-live="polite"></section>
+
+      <section class="live-panel card" id="live-panel" aria-live="polite"></section>
+
+      <div class="section-head">
+        <div>
+          <h2>Hesaplar</h2>
+          <p id="accounts-sub">—</p>
+        </div>
+        <div class="section-actions">
+          <div class="account-switcher">
+            <label>Hesap seç
+              <select id="account-select" aria-label="Geçilecek hesap"></select>
+            </label>
+            <button id="switch-selected" class="btn btn-small" type="button">Geç</button>
+          </div>
+          <label class="search">
+            <span class="sr-only">Hesap ara</span>
+            <input id="search" type="search" placeholder="Hesap ara  ( / )" autocomplete="off">
+          </label>
+          <button id="add-btn" class="btn btn-primary" title="Yeni hesap ekle (N)">+ Hesap ekle</button>
+        </div>
+      </div>
+      <div class="account-toolbar" aria-label="Hesap görünümü">
+        <label>Göster<select id="account-filter"><option value="all">Tüm hesaplar</option><option value="attention">İlgilenilmesi gereken</option><option value="available">Kotası olan</option><option value="unknown">Kotası bilinmeyen</option><option value="active">Aktif hesap</option></select></label>
+        <label>Sırala<select id="account-sort"><option value="default">Aktif / ana önce</option><option value="quota-desc">Kota: yüksekten düşüğe</option><option value="quota-asc">Kota: düşükten yükseğe</option><option value="name">Hesap adı</option></select></label>
+        <span id="account-results" role="status" aria-live="polite"></span>
+      </div>
+
+      <section id="accounts" class="account-grid" aria-label="Kayıtlı hesaplar"></section>
+      <div id="no-results" class="empty card hidden"><h2>Uygun hesap yok</h2><p>Aramayı veya filtreyi değiştirin.</p></div>
+
+      <section id="empty" class="empty card hidden">
+        <div class="empty-mark">◎</div>
+        <h2>Henüz kayıtlı hesap yok</h2>
+        <p>Antigravity'de giriş yapın, ardından canlı hesabı yakalayın. Ana hesabınız otomatik olarak <code>main</code> profiline alınır.</p>
+        <button class="btn btn-primary" data-action="capture-current">Canlı hesabı yakala</button>
+      </section>
+
+      <section class="add-panel card" id="add-panel">
+        <div class="panel-head">
+          <div>
+            <h2>Hesap ekle</h2>
+            <p id="add-hint">Antigravity'nin kendi giriş akışıyla yeni hesap ekleyin veya açık hesabı elle kaydedin.</p>
+          </div>
+          <span class="badge badge-plan">Secret Service</span>
+        </div>
+        <div class="login-cta">
+          <button id="login-btn" class="btn btn-primary" type="button">Antigravity ile giriş yap</button>
+          <span class="hint">Tarayıcıda istediğin Google hesabını seç; yeni hesap otomatik kaydedilir. Çıkış yapılmaz.</span>
+        </div>
+        <details id="manual-capture" class="manual-capture"><summary>Elle yakala / token güncelle</summary>
+        <form id="capture-form" class="form-row">
+          <label>Profil adı
+            <input id="capture-name" type="text" name="name" placeholder="hesap1" autocomplete="off" maxlength="64" required>
+          </label>
+          <label>Görünen ad <span class="muted">(opsiyonel)</span>
+            <input id="capture-label" type="text" name="label" placeholder="Örn. İş hesabı" autocomplete="off" maxlength="64">
+          </label>
+          <button id="capture-btn" class="btn btn-primary" type="submit">Yakala</button>
+        </form>
+        <p class="hint">
+          <b>Önerilen:</b> yukarıdaki <b>Antigravity ile giriş yap</b> düğmesini kullanın; çıkış gerekmez,
+          hesap otomatik kaydedilir. Elle yakalama için Antigravity'de açık hesabın adını yazıp
+          <b>Yakala</b> deyin. <b>Skills, MCP, settings ve projeler değiştirilmez;</b>
+          yalnızca OAuth oturumu profile alınır.
+        </p>
+        </details>
+      </section>
+    </main>
+
+    <footer>
+      <span>Yalnızca <code>127.0.0.1</code> dinlenir</span>
+      <span>Token'lar Secret Service'te; dosyaya yazılmaz</span>
+      <span id="footer-version">Sürüm bekleniyor</span>
+    </footer>
+  </div>
+
+  <div id="toast-root" class="toast-root" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
