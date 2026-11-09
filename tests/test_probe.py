@@ -206,3 +206,21 @@ def test_parse_missing_user_status():
     assert quota.ok is False
     assert quota.error
     assert quota.worst_remaining is None
+
+
+def test_parse_cli_usage_buckets():
+    from aio.probe import parse_cli_usage
+
+    data = {"status": "SUCCESS", "command": {"name": "usage", "data": {"groups": [
+        {"name": "Gemini Models", "buckets": [
+            {"id": "gemini-weekly", "window": "weekly", "remaining_fraction": 0.85, "reset_time": "2026-11-14T18:37:05Z"},
+            {"id": "gemini-5h", "window": "5h", "remaining_fraction": 0.79, "reset_time": "2026-11-09T15:04:08Z"}]},
+        {"name": "Claude and GPT models", "buckets": [
+            {"id": "3p-5h", "window": "5h", "remaining_fraction": 0, "reset_time": "2026-11-09T16:21:44Z"}]},
+    ]}}}
+    q = parse_cli_usage(data, email="a@b.c")
+    assert q.ok and q.email == "a@b.c" and len(q.groups) == 3
+    assert q.groups[0].family == "claude" and q.groups[0].exhausted
+    assert {g.window for g in q.groups} == {"weekly", "5h"}
+    assert parse_cli_usage({}, email="a@b.c").ok is False
+    assert parse_cli_usage(data, email=None).ok is False

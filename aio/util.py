@@ -88,16 +88,12 @@ def human_percent(value: float | None) -> str:
     if value is None:
         return "—"
     value = clamp(float(value), 0.0, 100.0)
-    if value == 100:
-        return "100%"
-    if value == 0:
-        return "0%"
-    precise = f"{value:.4f}"
-    if float(precise) == 100:
-        return ">99.9999%"
-    if float(precise) == 0:
-        return "<0.0001%"
-    return f"{precise.rstrip('0').rstrip('.')}%"
+    # Tam sayı; kısmi kotayı asla %0 / %100 diye yuvarlama.
+    if 0 < value < 1:
+        return "<1%"
+    if 99 < value < 100:
+        return "99%"
+    return f"{round(value)}%"
 
 
 def human_count(value: int | None) -> str:

@@ -147,3 +147,39 @@ def test_install_candidate_must_be_an_executable_file(tmp_path, monkeypatch):
     candidate.rmdir()
     candidate.write_text("test executable")
     assert antigravity.installed_binary() == candidate
+
+
+def test_installation_is_discovered_without_opt(tmp_path, monkeypatch):
+    install = tmp_path / "installs" / "antigravity-cli" / "1.0"
+    install.mkdir(parents=True)
+    binary = install / "agy"
+    binary.write_text("#!/bin/sh\n")
+    binary.chmod(0o755)
+    monkeypatch.setattr(antigravity.shutil, "which", lambda name: str(binary) if name == "agy" else None)
+    monkeypatch.setattr(antigravity, "APP_BINARY", tmp_path / "missing")
+    monkeypatch.setattr(antigravity, "LS_BINARY", tmp_path / "missing-ls")
+    monkeypatch.setattr(antigravity, "_search_dirs", lambda: [])
+    assert antigravity.installed_binary() == binary
+    # CLI (agy) language_server değildir; ayrı binary yoksa None dönmeli.
+    assert antigravity.installed_ls_binary() is None
+
+
+def test_env_override_wins(tmp_path, monkeypatch):
+    custom = tmp_path / "custom-antigravity"
+    custom.write_text("x")
+    custom.chmod(0o755)
+    monkeypatch.setenv(antigravity.ENV_BINARY, str(custom))
+    assert antigravity.installed_binary() == custom
+
+
+def test_separate_language_server_next_to_desktop_app(tmp_path, monkeypatch):
+    app_dir = tmp_path / "app"
+    (app_dir / "resources" / "bin").mkdir(parents=True)
+    binary = app_dir / "antigravity"
+    ls = app_dir / "resources" / "bin" / "language_server"
+    for f in (binary, ls):
+        f.write_text("x")
+        f.chmod(0o755)
+    monkeypatch.setattr(antigravity.shutil, "which", lambda name: str(binary) if name == "antigravity" else None)
+    monkeypatch.setattr(antigravity, "LS_BINARY", tmp_path / "missing-ls")
+    assert antigravity.installed_ls_binary() == ls

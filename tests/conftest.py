@@ -121,3 +121,11 @@ def fake_keyring():
 @pytest.fixture()
 def fake_app():
     return FakeApp()
+
+
+@pytest.fixture(autouse=True)
+def _no_fetch_pauses(monkeypatch):
+    from aio import quota
+
+    monkeypatch.setattr(quota, "ACCOUNT_PAUSE_SECONDS", (0.0, 0.0))
+    monkeypatch.setattr(quota, "MIN_FETCH_INTERVAL_SECONDS", 0)

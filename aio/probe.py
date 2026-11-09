@@ -286,6 +286,57 @@ def parse_user_status(data: dict, *, now: datetime | None = None, source: str = 
     )
 
 
+_WINDOW_LABELS = {"weekly": "Haftalık limit", "5h": "5 saatlik limit"}
+
+
+def parse_cli_usage(data: dict, *, email: str | None, now: datetime | None = None, source: str = "cli") -> UserQuota:
+    """`agy /usage` JSON çıktısını UserQuota'ya çevirir (e-posta çağıran tarafından verilir)."""
+    now = now or utc_now()
+    usage = ((data.get("command") or {}).get("data") or {}) if isinstance(data, dict) else {}
+    raw_groups = usage.get("groups") if isinstance(usage, dict) else None
+    if not isinstance(raw_groups, list) or not raw_groups:
+        return UserQuota(ok=False, email=email, error="agy /usage yanıtında kota grubu yok.", fetched_at=now_iso(), source=source)
+    groups: list[QuotaGroup] = []
+    for raw in raw_groups:
+        if not isinstance(raw, dict):
+            continue
+        group_name = str(raw.get("name") or "Diğer")
+        family = _family("", group_name)
+        for bucket in raw.get("buckets") or []:
+            if not isinstance(bucket, dict):
+                continue
+            remaining = _fraction_or_none(bucket.get("remaining_fraction"))
+            reset_at = _parse_reset(bucket.get("reset_time"))
+            window = str(bucket.get("window") or "bilinmiyor")
+            groups.append(
+                QuotaGroup(
+                    id=f"usage:{bucket.get('id') or group_name + window}",
+                    family=family,
+                    name=f"{group_name} · {_WINDOW_LABELS.get(window, window)}",
+                    window=window,
+                    remaining=remaining,
+                    remaining_percent=remaining * 100.0 if remaining is not None else None,
+                    reset_at=reset_at.isoformat() if reset_at else None,
+                    reset_in_seconds=int(max(0, (reset_at - now).total_seconds())) if reset_at else None,
+                    exhausted=remaining == 0.0,
+                    models=[group_name],
+                    model_id=str(bucket.get("id")) if bucket.get("id") else None,
+                )
+            )
+    groups.sort(key=lambda g: (g.remaining is None, g.remaining if g.remaining is not None else 0.0, g.name))
+    worst = min((g.remaining for g in groups if g.remaining is not None), default=None)
+    return UserQuota(
+        ok=bool(email) and bool(groups),
+        email=email,
+        groups=groups,
+        worst_remaining=worst,
+        fetched_at=now_iso(),
+        error=None if email else "Canlı keyring'den hesap e-postası okunamadı.",
+        source=source,
+        raw_model_count=len(groups),
+    )
+
+
 class LanguageServerProbe:
     """İzole HOME ile Antigravity language_server başlatıp kota okur."""
 
@@ -373,7 +424,11 @@ class LanguageServerProbe:
 
     def probe(self) -> UserQuota:
         if not self.ls_binary or not Path(self.ls_binary).is_file():
-            raise ProbeError("Antigravity language_server binary'si bulunamadı.")
+            raise ProbeError(
+                "Antigravity language_server binary'si bulunamadı. Kota okuma masaüstü Antigravity "
+                "uygulamasını gerektirir; yalnızca CLI (agy) kurulu ise language_server yoktur. "
+                "Gerekirse AIO_ANTIGRAVITY_LS ile yolunu verin."
+            )
 
         last_error = ""
         for attempt in range(2):

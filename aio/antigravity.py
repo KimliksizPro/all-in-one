@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import functools
+import json
 import os
 import re
 import shutil
@@ -19,9 +20,47 @@ from .util import atomic_write_json, read_json, redact
 
 LS_BINARY = Path("/opt/Antigravity/resources/bin/language_server")
 APP_BINARY = Path("/opt/Antigravity/antigravity")
-USER_DATA_DIR = Path.home() / ".config" / "Antigravity"
+BINARY_NAMES = ("antigravity", "agy")
+ENV_BINARY = "AIO_ANTIGRAVITY_BIN"
+ENV_LS_BINARY = "AIO_ANTIGRAVITY_LS"
+ENV_DATA_DIR = "AIO_ANTIGRAVITY_DATA"
+
+
+def _config_home() -> Path:
+    env = os.environ.get("XDG_CONFIG_HOME")
+    return Path(env) if env and os.path.isabs(env) else Path.home() / ".config"
+
+
+def _find_user_data_dir() -> Path:
+    """Masaüstü uygulamasının kullanıcı verisi (Electron userData) dizini."""
+    override = os.environ.get(ENV_DATA_DIR)
+    if override:
+        return Path(override).expanduser()
+    home = Path.home()
+    candidates = [
+        _config_home() / "Antigravity",
+        home / ".config" / "Antigravity",
+        home / ".config" / "antigravity",
+        home / ".var" / "app" / "com.google.Antigravity" / "config" / "Antigravity",
+        home / "snap" / "antigravity" / "current" / ".config" / "Antigravity",
+    ]
+    for c in candidates:
+        if c.is_dir():
+            return c
+    return candidates[0]
+
+
+def _find_gemini_data_dir(gemini_dir: Path) -> Path:
+    # Masaüstü: ~/.gemini/antigravity, CLI (agy): ~/.gemini/antigravity-cli
+    for name in ("antigravity", "antigravity-cli"):
+        if (gemini_dir / name).is_dir():
+            return gemini_dir / name
+    return gemini_dir / "antigravity"
+
+
+USER_DATA_DIR = _find_user_data_dir()
 GEMINI_DIR = Path.home() / ".gemini"
-ANTIGRAVITY_DATA_DIR = GEMINI_DIR / "antigravity"
+ANTIGRAVITY_DATA_DIR = _find_gemini_data_dir(GEMINI_DIR)
 APP_STORAGE = USER_DATA_DIR / "app_storage.json"
 LS_LOG = USER_DATA_DIR / "logs" / "language_server.log"
 MAIN_LOG = USER_DATA_DIR / "logs" / "main.log"
@@ -127,9 +166,9 @@ def _is_ls_process(proc: psutil.Process) -> bool:
 def _is_app_identity(name: str, exe: str, cmd: str) -> bool:
     if _is_isolated_process(cmd) or _is_ls_identity(name, exe, cmd):
         return False
-    if exe and Path(exe).name.lower() == "antigravity":
+    if exe and Path(exe).name.lower() in BINARY_NAMES:
         return True
-    return name == "antigravity" or (
+    return name in BINARY_NAMES or (
         "/opt/Antigravity/antigravity" in cmd and "language_server" not in cmd
     )
 
@@ -197,23 +236,83 @@ def ls_processes() -> list[psutil.Process]:
     return list(_discover_processes()[1])
 
 
+def _usable(path: Path) -> bool:
+    try:
+        return path.is_file() and os.access(path, os.X_OK)
+    except OSError:
+        return False
+
+
+def _search_dirs() -> list[Path]:
+    """Antigravity'nin kurulu olabileceği, ucuz ve bilinen dizinler."""
+    home = Path.home()
+    data_home = os.environ.get("XDG_DATA_HOME")
+    data = Path(data_home) if data_home and os.path.isabs(data_home) else home / ".local" / "share"
+    dirs = [
+        Path("/opt/Antigravity"),
+        Path("/opt/antigravity"),
+        Path("/usr/lib/antigravity"),
+        Path("/usr/lib/Antigravity"),
+        Path("/usr/share/antigravity"),
+        Path("/usr/local/bin"),
+        Path("/usr/bin"),
+        home / ".local" / "bin",
+        home / ".antigravity" / "bin",
+        home / ".gemini" / "antigravity-cli" / "bin",
+        data / "antigravity",
+        home / "Applications" / "Antigravity",
+        Path("/var/lib/flatpak/app/com.google.Antigravity/current/active/files"),
+        home / ".local" / "share" / "flatpak" / "app" / "com.google.Antigravity" / "current" / "active" / "files",
+        Path("/snap/antigravity/current"),
+    ]
+    # mise / asdf: .../installs/antigravity*/<sürüm|latest>/
+    for manager in (data / "mise" / "installs", home / ".asdf" / "installs"):
+        try:
+            for tool in manager.glob("antigravity*"):
+                dirs.extend(sorted(tool.glob("*"), reverse=True))
+        except OSError:
+            continue
+    return dirs
+
+
 def installed_binary() -> Path | None:
-    found = shutil.which("antigravity")
-    candidates = ([Path(found)] if found else []) + [APP_BINARY, Path("/usr/bin/antigravity")]
+    candidates: list[Path] = []
+    override = os.environ.get(ENV_BINARY)
+    if override:
+        candidates.append(Path(override).expanduser())
+    for name in BINARY_NAMES:
+        found = shutil.which(name)
+        if found:
+            candidates.append(Path(found))
+    candidates += [APP_BINARY, Path("/usr/bin/antigravity")]
+    for directory in _search_dirs():
+        candidates.extend(directory / name for name in BINARY_NAMES)
+    seen: set[Path] = set()
     for p in candidates:
-        if p.is_file() and os.access(p, os.X_OK):
+        if p in seen:
+            continue
+        seen.add(p)
+        if _usable(p):
             return p
     return None
 
 
 def installed_ls_binary() -> Path | None:
-    if LS_BINARY.is_file() and os.access(LS_BINARY, os.X_OK):
+    override = os.environ.get(ENV_LS_BINARY)
+    if override and _usable(Path(override).expanduser()):
+        return Path(override).expanduser()
+    if _usable(LS_BINARY):
         return LS_BINARY
     binary = installed_binary()
     if binary:
-        candidate = Path(binary).resolve().parent / "resources" / "bin" / "language_server"
-        if candidate.is_file() and os.access(candidate, os.X_OK):
-            return candidate
+        resolved = Path(binary).resolve()
+        for base in {resolved.parent, Path(binary).parent}:
+            candidate = base / "resources" / "bin" / "language_server"
+            if _usable(candidate):
+                return candidate
+            sibling = base / "language_server"
+            if _usable(sibling):
+                return sibling
     return None
 
 
@@ -397,6 +496,33 @@ def login_with_browser(timeout: float = 300.0) -> dict:
         {"isGcpTos": False, "additionalScopes": [], "enableBusinessLogin": False},
         timeout=timeout,
     )
+
+
+def fetch_usage_cli(timeout: float = 45.0) -> dict:
+    """CLI (`agy`) kurulumlarında kota: `agy --output-format json -p=/usage`."""
+    binary = installed_binary()
+    if not binary:
+        raise AppError("Antigravity kurulu değil.")
+    try:
+        proc = subprocess.run(
+            [str(binary), "--output-format", "json", "-p=/usage"],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            timeout=timeout,
+            cwd=str(Path.home()),
+        )
+    except subprocess.TimeoutExpired as exc:
+        raise AppError("agy /usage zaman aşımına uğradı.") from exc
+    except OSError as exc:
+        raise AppError(f"agy çalıştırılamadı: {redact(exc)}") from exc
+    try:
+        data = json.loads(proc.stdout)
+    except ValueError as exc:
+        raise AppError(f"agy /usage yanıtı JSON değil: {redact((proc.stderr or proc.stdout)[:200])}") from exc
+    if not isinstance(data, dict) or data.get("status") != "SUCCESS":
+        raise AppError(f"agy /usage başarısız: {redact(str(data)[:200])}")
+    return data
 
 
 def fetch_user_status_from_running(timeout: float = 20.0) -> dict | None:

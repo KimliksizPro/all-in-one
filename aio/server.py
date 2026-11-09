@@ -6,6 +6,7 @@ token'lar hiçbir API yanıtında yer almaz.
 from __future__ import annotations
 
 import asyncio
+import random
 import logging
 import time
 from contextlib import asynccontextmanager
@@ -335,7 +336,8 @@ async def _poll_loop(service: Service) -> None:
                         last_all = time.monotonic()
                     except Exception as exc:
                         log.debug("all poll: %s", redact(exc))
-            delay = max(30, int(settings.poll_seconds))
+            # Sabit aralıklı istek izi bırakma: ±%15 rastgele sapma.
+            delay = max(30, int(settings.poll_seconds)) * random.uniform(0.85, 1.15)
         except Exception as exc:
             log.debug("poll settings: %s", redact(exc))
             delay = 300

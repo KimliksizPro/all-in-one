@@ -4,7 +4,7 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const numFmt = new Intl.NumberFormat('tr-TR');
-  const pctFmt = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 4, useGrouping: false });
+  const pctFmt = new Intl.NumberFormat('tr-TR', { maximumFractionDigits: 0, useGrouping: false });
   const precisePctFmt = new Intl.NumberFormat('tr-TR', { maximumSignificantDigits: 17, useGrouping: false });
   const STORAGE_BROWSER_NOTIFY = 'aio.browserNotify';
   const STORAGE_NOTIFIED = 'aio.notifiedSig';
@@ -101,10 +101,11 @@
 
   function fmtPct(value) {
     if (value === null || value === undefined || !Number.isFinite(Number(value))) return '—';
-    const n = Number(value);
-    const rounded = Number(n.toFixed(4));
-    const formatter = (n !== 0 && rounded === 0) || (n !== 100 && rounded === 100) ? precisePctFmt : pctFmt;
-    return formatter.format(n) + '%';
+    const n = Math.min(100, Math.max(0, Number(value)));
+    // Tam sayı göster; ama kısmi kotayı asla %0 / %100 diye yuvarlama.
+    if (n > 0 && n < 1) return '<1%';
+    if (n > 99 && n < 100) return '99%';
+    return pctFmt.format(Math.round(n)) + '%';
   }
 
   function fmtNum(value) {

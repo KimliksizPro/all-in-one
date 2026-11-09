@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import functools
+import random
 import threading
+import time
 from dataclasses import dataclass, field, replace
 from typing import Callable
 
@@ -10,12 +12,25 @@ from . import antigravity, storage
 from .accounts import Accounts
 from .keyring import KEYRING_LOCK, KeyringError, SecretService, TokenFormatError, decode_token
 from .locks import keyring_file_lock
-from .probe import LanguageServerProbe, ProbeError, UserQuota, parse_user_status
+from .probe import LanguageServerProbe, ProbeError, UserQuota, parse_cli_usage, parse_user_status
 from .util import now_iso, parse_iso, redact, utc_now
 
 CACHE_TTL_SECONDS = 300
 CACHE_TTL_ERROR_SECONDS = 60
 CACHE_VERSION = 2
+
+# Sunucuya nazik davran: aynı hesap için art arda istek atma, hatada geri çekil.
+MIN_FETCH_INTERVAL_SECONDS = 20          # manuel "yenile" bile bu süre içinde yeniden sormaz
+BACKOFF_BASE_SECONDS = 120               # hata sonrası otomatik yeniden deneme: 2, 4, 8 ... dk
+BACKOFF_MAX_SECONDS = 1800
+RATE_LIMIT_COOLDOWN_SECONDS = 900        # 429 / RESOURCE_EXHAUSTED benzeri yanıtlar
+NEEDS_LOGIN_COOLDOWN_SECONDS = 3600      # geçersiz oturumu otomatik zorlama
+ACCOUNT_PAUSE_SECONDS = (3.0, 8.0)       # toplu taramada hesaplar arası rastgele bekleme
+_RATE_LIMIT_MARKERS = ("429", "rate limit", "rate_limit", "resource_exhausted", "too many", "quota exceeded")
+
+
+def _jitter(seconds: float, spread: float = 0.2) -> float:
+    return seconds * random.uniform(1.0 - spread, 1.0 + spread)
 
 
 def _copy_quota(quota: UserQuota) -> UserQuota:
@@ -95,6 +110,9 @@ class QuotaService:
         self._cache_signatures: dict[str, tuple | None] = {}
         self._job = RefreshJob()
         self._job_thread: threading.Thread | None = None
+        # Otomatik (force=False) denemeler için hata geri çekilmesi; bellekte tutulur.
+        self._failures: dict[str, int] = {}
+        self._cooldown_until: dict[str, float] = {}
         self.on_result: Callable[[str, UserQuota], None] | None = None
         accounts.validator = self.validate_live
 
@@ -177,12 +195,34 @@ class QuotaService:
 
     # ---------- canlı RPC ----------
 
+    def _uses_cli(self) -> bool:
+        # Ayrı language_server yok (yalnızca `agy` CLI kurulu): /usage komutunu kullan.
+        return hasattr(self.app, "fetch_usage_cli") and not self.app.installed_ls_binary()
+
+    def _probe_cli(self) -> UserQuota:
+        try:
+            live = self.keyring.read_live()
+        except (KeyringError, TokenFormatError) as exc:
+            raise ProbeError(f"Canlı keyring okunamadı: {redact(exc)}") from exc
+        try:
+            data = self.app.fetch_usage_cli()
+        except antigravity.AppError as exc:
+            raise ProbeError(str(exc)) from exc
+        return parse_cli_usage(data, email=live.email if live else None)
+
     def _probe_current(self, *, source: str = "probe") -> UserQuota:
-        if self.app.running():
+        if self._uses_cli():
+            quota = self._probe_cli()
+        elif self.app.running():
             data = antigravity.fetch_user_status_from_running()
-            if not data:
+            if data:
+                quota = parse_user_status(data, source="running")
+            elif getattr(self.app, "running_ls_info", lambda: True)() is None:
+                # CLI (agy) açık ama HTTP language_server'ı dışarı açmıyor: keyring'e
+                # dokunmadan izole bir probe ile oku.
+                quota = self._probe_factory.probe()
+            else:
                 raise ProbeError("Antigravity açık ancak language_server kota yanıtı vermedi. Birkaç saniye sonra tekrar deneyin.")
-            quota = parse_user_status(data, source="running")
         else:
             quota = self._probe_factory.probe()
         if not quota.ok:
@@ -212,6 +252,42 @@ class QuotaService:
         self._sync_live_to_profile(quota)
         return quota
 
+    # ---------- istek sıklığı / geri çekilme ----------
+
+    def _record_success(self, name: str) -> None:
+        with self._lock:
+            self._failures.pop(name, None)
+            self._cooldown_until.pop(name, None)
+
+    def _record_failure(self, name: str, error: str, *, needs_login: bool = False) -> None:
+        text = (error or "").lower()
+        with self._lock:
+            count = self._failures.get(name, 0) + 1
+            self._failures[name] = count
+            wait = min(BACKOFF_MAX_SECONDS, BACKOFF_BASE_SECONDS * 2 ** (count - 1))
+            if any(marker in text for marker in _RATE_LIMIT_MARKERS):
+                wait = max(wait, RATE_LIMIT_COOLDOWN_SECONDS)
+            if needs_login:
+                wait = max(wait, NEEDS_LOGIN_COOLDOWN_SECONDS)
+            self._cooldown_until[name] = time.monotonic() + _jitter(wait)
+
+    def _in_cooldown(self, name: str) -> bool:
+        with self._lock:
+            return time.monotonic() < self._cooldown_until.get(name, 0.0)
+
+    @staticmethod
+    def _fetched_recently(quota: UserQuota | None) -> bool:
+        if quota is None or not quota.ok:
+            return False
+        fetched = parse_iso(quota.fetched_at)
+        return bool(fetched and (utc_now() - fetched).total_seconds() < MIN_FETCH_INTERVAL_SECONDS)
+
+    @staticmethod
+    def _pause_between_accounts() -> None:
+        low, high = ACCOUNT_PAUSE_SECONDS
+        if high > 0:
+            time.sleep(random.uniform(low, high))
+
     # ---------- tek profil ----------
 
     @_keyring_serialized
@@ -230,6 +306,10 @@ class QuotaService:
             raise QuotaError(f"'{name}' profili bulunamadı.")
         cached = self.get_cached(name)
         if cached and not force and not cached.stale and cached.ok:
+            return cached
+        if cached and self._fetched_recently(cached):
+            return cached
+        if cached and not force and self._in_cooldown(name):
             return cached
 
         target_raw = None
@@ -287,6 +367,7 @@ class QuotaService:
                 )
             quota.stale = False
             quota.source = "live"
+            self._record_success(name)
             self._save_cache(name, quota)
             self.accounts.update_quota_meta(name, quota)
             if self.on_result:
@@ -313,6 +394,7 @@ class QuotaService:
                 for token in ("login", "oturum", "unauth", "401", "invalid_grant", "revoked")
             )
             quota = self._error_quota(name, meta.email, text, needs_login=needs_login)
+            self._record_failure(name, text, needs_login=needs_login)
             self._save_cache(name, quota)
             self.accounts.mark_needs_login(name, needs_login)
             if self.on_result:
@@ -406,7 +488,9 @@ class QuotaService:
                 needs_stop=True,
             )
         results: list[UserQuota] = []
-        for name in names:
+        for index, name in enumerate(names):
+            if index:
+                self._pause_between_accounts()
             try:
                 results.append(self.refresh_one(name, force=force, allow_swap=True))
             except QuotaError as exc:
@@ -446,6 +530,8 @@ class QuotaService:
                     needs_stop=True,
                 )
             for i, name in enumerate(names, start=1):
+                if i > 1:
+                    self._pause_between_accounts()
                 with self._lock:
                     self._job.current = name
                 try:

@@ -296,3 +296,37 @@ def test_unknown_model_quota_survives_cache_without_becoming_exhausted(cache_ser
     assert cached.groups[0].remaining_percent is None
     assert not cached.groups[0].exhausted
     assert cached.worst_remaining is None
+
+
+def test_failed_probe_backs_off_for_automatic_refresh(aio_home, fake_keyring, fake_app, tmp_path):
+    accounts = setup(aio_home, fake_keyring, fake_app, tmp_path)
+    probe = FakeProbe(fake_keyring, {"second@example.com": make_quota("second@example.com", 40)})
+    service = QuotaService(accounts, fake_keyring, probe=probe, app_module=fake_app)
+    service.refresh_one("second", force=True)
+    probe.fail = True
+    service.refresh_one("second", force=True)
+    calls = probe.calls
+    # Otomatik yenileme geri çekilme süresinde sunucuya tekrar gitmez.
+    service.refresh_one("second", force=False)
+    assert probe.calls == calls
+    # Kullanıcı açıkça isterse geri çekilme aşılır.
+    service.refresh_one("second", force=True)
+    assert probe.calls == calls + 1
+
+
+def test_rate_limit_error_uses_long_cooldown(aio_home, fake_keyring, fake_app, tmp_path):
+    accounts = setup(aio_home, fake_keyring, fake_app, tmp_path)
+    service = QuotaService(accounts, fake_keyring, probe=FakeProbe(fake_keyring, {}), app_module=fake_app)
+    service._record_failure("second", "HTTP 429 RESOURCE_EXHAUSTED")
+    remaining = service._cooldown_until["second"] - quota_module.time.monotonic()
+    assert remaining >= quota_module.RATE_LIMIT_COOLDOWN_SECONDS * 0.79
+
+
+def test_forced_refresh_within_min_interval_reuses_cache(aio_home, fake_keyring, fake_app, tmp_path, monkeypatch):
+    monkeypatch.setattr(quota_module, "MIN_FETCH_INTERVAL_SECONDS", 20)
+    accounts = setup(aio_home, fake_keyring, fake_app, tmp_path)
+    probe = FakeProbe(fake_keyring, {"second@example.com": make_quota("second@example.com", 40)})
+    service = QuotaService(accounts, fake_keyring, probe=probe, app_module=fake_app)
+    service.refresh_one("second", force=True)
+    service.refresh_one("second", force=True)
+    assert probe.calls == 1
