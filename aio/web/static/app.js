@@ -30,6 +30,67 @@
     lastLoginStatus: 'idle',
   };
 
+  // ---------- ikonlar (Lucide, ISC lisansı; CSP nedeniyle satır içi) ----------
+
+  const ICONS = {
+    layers: '<path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/>',
+    refresh: '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+    settings: '<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+    plus: '<path d="M5 12h14"/><path d="M12 5v14"/>',
+    search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    monitor: '<rect width="20" height="14" x="2" y="3" rx="2"/><path d="M8 21h8"/><path d="M12 17v4"/>',
+    more: '<circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/>',
+    moreV: '<circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>',
+    chevron: '<path d="m6 9 6 6 6-6"/>',
+    x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    alert: '<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/>',
+    info: '<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    swap: '<path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>',
+    power: '<path d="M12 2v10"/><path d="M18.4 6.6a9 9 0 1 1-12.77.04"/>',
+    play: '<polygon points="6 3 20 12 6 21 6 3"/>',
+    star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>',
+    pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>',
+    trash: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+    download: '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/>',
+    login: '<path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/>',
+    external: '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+    shield: '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/>',
+    clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+    users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
+    userPlus: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6"/><path d="M22 11h-6"/>',
+    gauge: '<path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>',
+    bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+    sort: '<path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="M11 4h10"/><path d="M11 8h7"/><path d="M11 12h4"/>',
+  };
+
+  function icon(name, cls = '') {
+    return `<svg class="icon${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${ICONS[name] || ''}</svg>`;
+  }
+
+  function hydrateIcons(root = document) {
+    $$('i[data-icon]', root).forEach((el) => { el.outerHTML = icon(el.dataset.icon); });
+  }
+
+  function initials(account) {
+    const source = String(account?.label || account?.name || account?.email || '?').trim();
+    const parts = source.split(/[\s._@-]+/).filter(Boolean);
+    const letters = parts.length > 1 ? parts[0][0] + parts[1][0] : source.slice(0, 2);
+    return letters.toLocaleUpperCase('tr-TR');
+  }
+
+  function hueFor(value) {
+    let hash = 0;
+    for (const ch of String(value || '')) hash = (hash * 31 + ch.codePointAt(0)) % 360;
+    return hash;
+  }
+
+  function avatar(account, size = '') {
+    return `<span class="avatar${size ? ' ' + size : ''}" style="--h:${hueFor(account?.email || account?.name)}" aria-hidden="true">${esc(initials(account))}</span>`;
+  }
+
   // ---------- yardımcılar ----------
 
   function esc(value) {
@@ -175,7 +236,8 @@
     const root = $('#toast-root');
     const el = document.createElement('div');
     el.className = `toast ${type}`;
-    el.textContent = message;
+    el.innerHTML = `${icon(type === 'error' ? 'alert' : type === 'success' ? 'check' : 'info')}<span></span>`;
+    el.lastElementChild.textContent = message;
     root.appendChild(el);
     window.setTimeout(() => {
       el.style.opacity = '0';
@@ -207,8 +269,6 @@
       element.classList.toggle('is-busy', locked);
     }
     for (const id of ['add-btn', 'settings-btn']) $(`#${id}`).disabled = locked;
-    $('#account-select').disabled = locked || !(state.data?.accounts || []).length;
-    $('#switch-selected').disabled = locked || !$('#account-select').value || $('#account-select').value === state.data?.active;
     $('#capture-btn').disabled = locked || !state.data?.live?.available;
     $('#refresh-btn').disabled = locked;
     $('#login-btn').disabled = locked;
@@ -340,13 +400,11 @@
     renderSection('live', [d.live, Boolean(safeVerificationUrl(d.live?.auth?.verification_url)), d.app, d.primary, d.active, d.accounts?.map((a) => [a.name, a.label])], () => renderLive(d));
     renderAccounts(d);
     renderAdd(d);
-    renderSection('switcher', [d.accounts?.map((a) => [a.name, a.label, a.email, a.primary, a.active]), d.active], () => renderSwitcher(d));
     updateCountdowns();
     tickMeta();
     syncBusy();
     const footer = $('#footer-version');
-    if (footer) footer.textContent = `v${d.version || ''}`;
-    $('#server-version').textContent = `Sunucu: ${d.version ? 'v' + d.version : 'sürüm bilinmiyor'}`;
+    if (footer) footer.textContent = d.version ? `Sunucu v${d.version}` : 'Sunucu sürümü bilinmiyor';
     if (d.keyring_busy) {
       $('#conn').title = 'Secret Service meşgul; canlı oturum son bilinen gözlemden gösteriliyor.';
     }
@@ -377,7 +435,7 @@
     }
     el.classList.remove('hidden');
     let cls = 'login-banner';
-    let icon = '<span class="spinner"></span>';
+    let mark = '<span class="spinner"></span>';
     let title = 'Giriş bekleniyor';
     let text = li.message || '';
     let sub = '';
@@ -386,24 +444,24 @@
       title = li.status === 'starting' ? 'Antigravity hazırlanıyor' : 'Tarayıcıda giriş bekleniyor';
       sub = li.before_email ? `Mevcut canlı hesap: ${li.before_email}` : 'Henüz canlı hesap yok.';
       if (li.auth_url) {
-        action = `<a class="btn btn-small btn-ghost" href="${esc(li.auth_url)}" target="_blank" rel="noreferrer">Giriş sayfasını aç</a>`;
+        action = `<a class="btn btn-small btn-ghost" href="${esc(li.auth_url)}" target="_blank" rel="noreferrer">${icon('external')}<span>Giriş sayfasını aç</span></a>`;
       }
     } else if (li.status === 'success' || li.status === 'success_same') {
       cls += ' success';
-      icon = '✓';
+      mark = icon('check');
       title = li.status === 'success' ? 'Hesap eklendi' : 'Aynı hesap seçildi';
       sub = li.captured_email ? `Kayıtlı profil: ${li.captured_email}` : '';
       action = '<button class="btn btn-small" data-action="login-reset">Tamam</button>';
     } else {
       cls += ' error';
-      icon = '!';
+      mark = icon('alert');
       title = 'Giriş tamamlanamadı';
       sub = li.error ? li.error : '';
       action = '<button class="btn btn-small btn-ghost" data-action="login-reset">Kapat</button>';
     }
     el.className = cls;
     setHtml(el, `
-      <div class="login-icon" aria-hidden="true">${icon}</div>
+      <div class="login-icon" aria-hidden="true">${mark}</div>
       <div class="login-main">
         <div class="login-title">${esc(title)}</div>
         <div class="login-text">${esc(text)}</div>
@@ -422,39 +480,13 @@
     }
   }
 
-  function renderSwitcher(d) {
-    const select = $('#account-select');
-    const button = $('#switch-selected');
-    if (!select || !button) return;
-    const accounts = d.accounts || [];
-    const active = d.active;
-    const selected = state.selectedAccount ?? (select.value || active);
-    setHtml(select, accounts.map((a) => {
-      const marks = [];
-      if (a.primary) marks.push('ANA');
-      if (a.active) marks.push('AKTİF');
-      const suffix = marks.length ? ` [${marks.join(' · ')}]` : '';
-      return `<option data-key="${esc(a.name)}" value="${esc(a.name)}">${esc(a.label || a.name)} — ${esc(a.email || a.name)}${esc(suffix)}</option>`;
-    }).join(''));
-    select.value = accounts.some((a) => a.name === selected) ? selected : active || accounts[0]?.name || '';
-    state.selectedAccount = select.value;
-    select.disabled = accounts.length === 0 || Boolean(d.login?.running);
-    button.disabled = select.disabled || !select.value || select.value === active;
-    button.textContent = select.value === active ? 'Aktif' : 'Geç';
-  }
-
   function renderSummary(d) {
     const accounts = d.accounts || [];
-    const live = d.live || {};
     const counts = d.counts || {};
     $('#stat-accounts').textContent = fmtNum(counts.accounts ?? accounts.length);
     const primary = accounts.find((a) => a.primary);
-    $('#stat-primary').textContent = primary ? `Ana: ${primary.label}` : 'Ana hesap yok';
+    $('#stat-primary').textContent = primary ? `Ana hesap: ${primary.label}` : 'Ana hesap yok';
 
-    $('#stat-live').textContent = live.available ? (live.email || 'Bilinmiyor') : 'Oturum yok';
-    $('#stat-live-sub').textContent = d.app?.running
-      ? `Antigravity açık${d.app.version ? ' · v' + d.app.version : ''}`
-      : 'Antigravity kapalı';
 
     let lowest = null;
     for (const account of accounts) {
@@ -492,7 +524,7 @@
       return;
     }
     el.classList.remove('hidden');
-    el.innerHTML = items.map((item) => `<div class="warning-box">${esc(item)}</div>`).join('');
+    el.innerHTML = items.map((item) => `<div class="warning-box">${icon('info')}<span>${esc(item)}</span></div>`).join('');
   }
 
   function renderProgress(d) {
@@ -507,12 +539,14 @@
       progress.setAttribute('aria-valuenow', String(Math.round(pct)));
       progress.setAttribute('aria-valuetext', `${d.refresh.done || 0} / ${d.refresh.total || 0} hesap`);
       btn.disabled = true;
-      btn.textContent = 'Yenileniyor…';
+      btn.lastElementChild.textContent = 'Yenileniyor…';
+      btn.classList.add('is-spinning');
     } else {
       progress.classList.add('hidden');
       progress.removeAttribute('aria-valuenow');
       btn.disabled = state.busy;
-      btn.textContent = 'Yenile';
+      btn.lastElementChild.textContent = 'Yenile';
+      btn.classList.remove('is-spinning');
       if (d.refresh?.error && d.refresh.error !== state.lastRefreshError) {
         state.lastRefreshError = d.refresh.error;
         toast(d.refresh.error, 'error');
@@ -539,20 +573,21 @@
     }
     const critical = alerts.some((a) => a.level === 'critical' || a.level === 'empty');
     banner.className = `alert-banner${critical ? ' critical' : ''}`;
-    const shown = alerts.slice(0, 8);
+    const shown = alerts.slice(0, 6);
     const items = shown.map((a) => {
-      const level = a.level === 'empty' ? 'DOLDU' : a.level === 'critical' ? 'KRİTİK' : 'AZALIYOR';
-      const reset = a.reset_at ? ` · ${fmtCountdown(a.reset_at)}` : '';
-      return `<li><b>${esc(level)}</b><span><b>${esc(a.label)}</b> · ${esc(a.group_name)} · ${esc(a.remaining_label)}${esc(reset)}</span></li>`;
+      const level = a.level === 'empty' ? 'Doldu' : a.level === 'critical' ? 'Kritik' : 'Azalıyor';
+      const reset = a.reset_at ? `<span class="alert-reset">${icon('clock')}<span data-reset="${esc(a.reset_at)}">${esc(fmtCountdown(a.reset_at))}</span></span>` : '';
+      return `<li class="lvl-${esc(a.level)}"><span class="alert-level">${esc(level)}</span><span class="alert-what"><b>${esc(a.label)}</b><span>${esc(a.group_name)}</span></span><span class="alert-val">${esc(a.remaining_label)}</span>${reset}</li>`;
     }).join('');
-    const extra = alerts.length > shown.length ? `<li><span>+ ${alerts.length - shown.length} uyarı daha</span></li>` : '';
+    const extra = alerts.length > shown.length ? `<li class="alert-more">+ ${alerts.length - shown.length} uyarı daha</li>` : '';
     banner.innerHTML = `
-      <div class="alert-icon" aria-hidden="true">${critical ? '!' : '△'}</div>
-      <div class="alert-body">
-        <div class="alert-title">${critical ? 'Kota kritik seviyede' : 'Kota azalıyor'}</div>
-        <ul class="alert-list">${items}${extra}</ul>
+      <div class="alert-head">
+        <span class="alert-icon" aria-hidden="true">${icon('alert')}</span>
+        <span class="alert-title">${critical ? 'Kota kritik seviyede' : 'Kota azalıyor'}</span>
+        <span class="alert-count">${alerts.length} uyarı</span>
+        <button class="icon-btn alert-dismiss" data-action="dismiss-alerts" title="Gizle" aria-label="Uyarıları gizle">${icon('x')}</button>
       </div>
-      <button class="alert-dismiss" data-action="dismiss-alerts" title="Gizle">×</button>`;
+      <ul class="alert-list">${items}${extra}</ul>`;
   }
 
   function renderLive(d) {
@@ -560,27 +595,25 @@
     const live = d.live || {};
     const app = d.app || {};
     const running = Boolean(app.running);
-    const appState = running ? 'Açık' : 'Kapalı';
-    const appClass = running ? 'open' : '';
-    const appButtons = running
-      ? `<button class="btn btn-small btn-ghost" data-action="app-stop">Antigravity'yi kapat</button>`
-      : `<button class="btn btn-small" data-action="app-start">Antigravity'yi aç</button>`;
-    const refreshBtn = `<button class="btn btn-small btn-ghost" data-action="refresh-active">Aktif kotayı yenile</button>`;
+    const appState = running ? `Antigravity açık${app.version ? ' · v' + app.version : ''}` : 'Antigravity kapalı';
+    const appButton = running
+      ? `<button class="btn btn-text" data-action="app-stop">${icon('power')}<span>Antigravity'yi kapat</span></button>`
+      : `<button class="btn btn-tonal" data-action="app-start">${icon('play')}<span>Antigravity'yi aç</span></button>`;
+    const refreshBtn = `<button class="btn btn-tonal" data-action="refresh-active">${icon('refresh')}<span>Aktif kotayı yenile</span></button>`;
+    const appLine = `
+      <div class="app-state${running ? ' open' : ''}"><span class="dot"></span>${esc(appState)}
+        <details class="app-details" data-key="app-details"><summary title="Uygulama yolları">${icon('info')}<span class="sr-only">Uygulama yolları</span></summary><div class="app-meta">${esc(app.binary || 'Antigravity binary bulunamadı')}${app.user_data_dir ? `<br>${esc(app.user_data_dir)}` : ''}</div></details>
+      </div>`;
 
     if (!live.available) {
-      panel.classList.remove('is-warning');
+      panel.className = 'hero';
       setHtml(panel, `
-        <div class="live-main">
-          <div class="eyebrow">Canlı Antigravity oturumu</div>
-          <h2 class="live-title">Oturum yok</h2>
-          <p class="live-sub">Antigravity'de bir Google hesabıyla giriş yapın; bu panel son bilinen canlı oturumu gösterir.</p>
-          ${live.error ? `<div class="error-box" style="margin-top:12px">${esc(live.error)}</div>` : ''}
-        </div>
-        <div class="live-side">
-          <div class="app-state ${appClass}"><span class="dot"></span> Antigravity: ${appState}</div>
-          <div class="app-meta">${esc(app.binary || 'Antigravity binary bulunamadı')}</div>
-          <div class="btn-row">${appButtons}${refreshBtn}</div>
-        </div>`);
+        <span class="avatar xl avatar-empty" aria-hidden="true">${icon('login')}</span>
+        <h2 class="hero-title">Canlı oturum yok</h2>
+        <p class="hero-sub">Antigravity'de bir Google hesabıyla giriş yapın; bu alan canlı oturumu gösterir.</p>
+        ${live.error ? `<div class="error-box">${esc(live.error)}</div>` : ''}
+        ${appLine}
+        <div class="btn-row">${refreshBtn}${appButton}</div>`);
       return;
     }
 
@@ -590,47 +623,44 @@
     const authIneligible = Boolean(auth.ineligible);
     const authEligible = auth.eligible === true && auth.has_valid_auth === true && !authIneligible;
     const warnings = [];
-    if (!known) warnings.push('Bu canlı hesap henüz kayıtlı değil. Aşağıdaki formdan yakalayın.');
+    if (!known) warnings.push('Bu canlı hesap henüz kayıtlı değil. Aşağıdan yakalayın.');
     if (known && !live.matches_active) warnings.push('Canlı hesap, aktif profille eşleşmiyor; sayfa yenilenince senkronize edilir.');
     if (live.expired) warnings.push('Access token süresi dolmuş; Antigravity açıldığında otomatik yenilenir.');
     if (authIneligible) warnings.push((auth.message || 'Antigravity bu Google hesabını uygun bulmuyor.').replace(/\s+/g, ' '));
-    panel.className = `live-panel card${warnings.length ? ' is-warning' : ''}`;
+    panel.className = `hero${warnings.length ? ' is-warning' : ''}`;
 
     const chips = [];
-    chips.push(`<span class="chip ${known ? 'good' : 'warn'}"><b>${known ? 'Kayıtlı' : 'Yeni'}</b> ${esc(known || '—')}</span>`);
-    if (knownAccount) chips.push(`<span class="chip"><b>${esc(knownAccount.label)}</b></span>`);
-    if (live.auth_method) chips.push(`<span class="chip">Auth <b>${esc(live.auth_method)}</b></span>`);
-    if (live.expiry) chips.push(`<span class="chip ${live.expired ? 'bad' : ''}">Token <b>${esc(fmtDateTime(live.expiry))}</b></span>`);
-    chips.push(`<span class="chip ${running ? 'good' : ''}">Antigravity <b>${esc(appState)}</b></span>`);
-    chips.push(`<span class="chip ${authIneligible ? 'bad' : authEligible ? 'good' : ''}">Antigravity uygunluğu <b>${authIneligible ? 'Uygun değil' : authEligible ? 'Doğrulandı' : 'Bilinmiyor'}</b></span>`);
+    chips.push(`<span class="chip ${known ? 'good' : 'warn'}">${known ? icon('check') : icon('alert')}${known ? `Profil: ${esc(knownAccount?.label || known)}` : 'Kayıtlı değil'}</span>`);
+    chips.push(`<span class="chip ${authIneligible ? 'bad' : authEligible ? 'good' : ''}">${icon('shield')}${authIneligible ? 'Uygun değil' : authEligible ? 'Doğrulandı' : 'Uygunluk bilinmiyor'}</span>`);
+    if (live.expiry) chips.push(`<span class="chip ${live.expired ? 'bad' : ''}">${icon('clock')}Token ${esc(fmtDateTime(live.expiry))}</span>`);
+    if (live.auth_method) chips.push(`<span class="chip">${esc(live.auth_method)}</span>`);
 
-    const warningHtml = warnings.map((w) => `<div class="warning-box">${esc(w)}</div>`).join('');
+    const warningHtml = warnings.map((w) => `<div class="warning-box">${icon('alert')}<span>${esc(w)}</span></div>`).join('');
     let authActions = '';
     if (authIneligible) {
       if (safeVerificationUrl(auth.verification_url)) {
-        authActions += `<a data-verification-link class="btn btn-small btn-ghost" href="${esc(auth.verification_url)}" target="_blank" rel="noreferrer">Doğrulamayı aç</a>`;
+        authActions += `<a data-verification-link class="btn btn-text" href="${esc(auth.verification_url)}" target="_blank" rel="noreferrer">${icon('external')}<span>Doğrulamayı aç</span></a>`;
       }
       if (d.primary && d.active !== d.primary) {
-        authActions += `<button class="btn btn-small" data-action="switch-primary">Ana hesaba geç</button>`;
+        authActions += `<button class="btn btn-tonal" data-action="switch-primary">${icon('swap')}<span>Ana hesaba geç</span></button>`;
       }
     }
     const captureBtn = !known
-      ? `<button class="btn btn-small btn-primary" data-action="capture-current">Canlı hesabı yakala</button>`
-      : `<button class="btn btn-small btn-ghost" data-action="capture-current">Token'ı güncelle</button>`;
+      ? `<button class="btn btn-filled" data-action="capture-current">${icon('download')}<span>Canlı hesabı yakala</span></button>`
+      : `<button class="btn btn-text" data-action="capture-current">${icon('download')}<span>Token'ı güncelle</span></button>`;
+    const name = live.account_name || knownAccount?.label || live.email || 'Bilinmeyen hesap';
 
     setHtml(panel, `
-      <div class="live-main">
-        <div class="eyebrow">Canlı Antigravity oturumu</div>
-        <h2 class="live-title">${esc(live.email || 'E-posta okunamadı')}</h2>
-        <p class="live-sub">${esc(live.account_name || '')}</p>
-        <div class="chips">${chips.join('')}</div>
-        ${warningHtml ? `<div style="display:grid;gap:8px;margin-top:12px">${warningHtml}</div>` : ''}
+      <div class="hero-avatar">
+        ${avatar({ email: live.email, label: live.account_name || knownAccount?.label || live.email }, 'xl')}
+        <span class="live-dot${running ? ' on' : ''}" title="${running ? 'Antigravity açık' : 'Antigravity kapalı'}"></span>
       </div>
-      <div class="live-side">
-        <div class="app-state ${appClass}"><span class="dot"></span> Antigravity: ${appState}</div>
-        <details class="app-details" data-key="app-details"><summary>Uygulama yolları</summary><div class="app-meta">${esc(app.binary || '')}<br>${esc(app.user_data_dir || '')}</div></details>
-        <div class="btn-row">${appButtons}${refreshBtn}${captureBtn}${authActions}</div>
-      </div>`);
+      <h2 class="hero-title">${esc(name)}</h2>
+      <p class="hero-sub" title="${esc(live.email || '')}">${esc(live.email || 'E-posta okunamadı')}</p>
+      <div class="chips">${chips.join('')}</div>
+      ${warningHtml ? `<div class="hero-warnings">${warningHtml}</div>` : ''}
+      ${appLine}
+      <div class="btn-row">${captureBtn}${refreshBtn}${appButton}${authActions}</div>`);
   }
 
   function renderAccounts(d) {
@@ -686,6 +716,25 @@
     syncBusy();
   }
 
+  const FAMILIES = [['gemini', 'Gemini'], ['claude', 'Claude'], ['gpt', 'GPT'], ['argon', 'Argon'], ['other', 'Diğer']];
+
+  function familyOf(model) {
+    return FAMILIES.some(([key]) => key === model.family) ? model.family : 'other';
+  }
+
+  function meter(pct, label) {
+    if (pct === null) return '<div class="bar bar-unknown"><i></i></div>';
+    return `<div class="bar" role="img" aria-label="${esc(label)}"><i class="${fillClass(pct)}" style="width:${Math.max(pct > 0 ? 2 : 0, Math.min(100, pct))}%"></i></div>`;
+  }
+
+  function ring(pct, label) {
+    const value = pct === null ? 0 : Math.max(0, Math.min(100, pct));
+    return `<div class="ring ${toneClass(pct)}" role="img" aria-label="${esc(label)}">
+      <svg viewBox="0 0 44 44" aria-hidden="true"><circle class="ring-track" cx="22" cy="22" r="19" pathLength="100"/>${pct === null ? '' : `<circle class="ring-fill" cx="22" cy="22" r="19" pathLength="100" stroke-dasharray="${value} 100"/>`}</svg>
+      <span class="ring-val">${pct === null ? '—' : esc(fmtPct(pct))}</span>
+    </div>`;
+  }
+
   function accountCard(a) {
     const q = a.quota;
     const groups = q?.groups || [];
@@ -693,87 +742,103 @@
     const worstModel = knownModels.reduce((worst, model) => !worst || model.remaining < worst.remaining ? model : worst, null);
     const pct = modelPct(worstModel);
     const auth = liveAuthFor(a);
+    const needsLogin = Boolean(a.needs_login || q?.needs_login);
     const eligibility = auth?.ineligible === true ? 'Uygun değil' : auth?.eligible === true && auth?.has_valid_auth === true ? 'Doğrulandı' : 'Bilinmiyor';
-    const tokenStatus = a.needs_login || q?.needs_login ? 'Giriş gerekli' : auth?.has_valid_auth === true ? 'Geçerli (canlı)' : 'Doğrulanmadı';
+    const tokenStatus = needsLogin ? 'Giriş gerekli' : auth?.has_valid_auth === true ? 'Geçerli (canlı)' : 'Doğrulanmadı';
     const badges = [];
-    if (a.primary) badges.push('<span class="badge badge-primary">Ana</span>');
-    if (a.active) badges.push('<span class="badge badge-active">Aktif</span>');
-    if (auth?.ineligible) badges.push('<span class="badge badge-login">Antigravity uygun değil</span>');
+    if (a.active) badges.push(`<span class="badge badge-active">${icon('check')}Aktif</span>`);
+    if (a.primary) badges.push(`<span class="badge badge-primary">${icon('star')}Ana</span>`);
     const plan = q?.plan_name || a.plan_name;
-    if (plan) badges.push(`<span class="badge badge-plan">${esc(plan)}</span>`);
-    if (a.needs_login || q?.needs_login) badges.push('<span class="badge badge-login">Giriş gerekli</span>');
-    if (q?.stale || a.quota_stale) badges.push('<span class="badge badge-stale">Önbellek</span>');
-    if (q && q.ok === false) badges.push('<span class="badge badge-login">Hata</span>');
-    if (knownModels.some((model) => model.remaining === 0)) badges.push('<span class="badge badge-exhausted">Doldu</span>');
+    if (plan) badges.push(`<span class="badge">${esc(plan)}</span>`);
+    if (auth?.ineligible) badges.push('<span class="badge badge-bad">Uygun değil</span>');
+    if (needsLogin) badges.push(`<span class="badge badge-bad">${icon('alert')}Giriş gerekli</span>`);
+    if (q && q.ok === false) badges.push('<span class="badge badge-bad">Hata</span>');
+    if (q?.stale || (q && a.quota_stale)) badges.push('<span class="badge badge-muted" title="Kota önbellekten gösteriliyor">Önbellek</span>');
 
-    let quotaHtml = '';
-    if (q) {
-      const totalModels = q.raw_model_count ?? groups.length;
-      const resetIso = worstModel?.reset_at || null;
-      const coverage = `${knownModels.length}/${totalModels} modelin kotası biliniyor`;
-      quotaHtml += `
-        <div class="quota-hero${pct === null ? ' quota-hero-unknown' : ''}" data-key="quota-hero">
-          <div class="quota-value ${toneClass(pct)}">${pct === null ? 'Kota bildirilmedi' : fmtPct(pct)}</div>
-          <div class="quota-caption">${worstModel ? `<span>En düşük model kotası</span><b>${esc(worstModel.name)}</b>` : ''}<span class="quota-coverage">${esc(coverage)}</span>${resetIso ? `<span class="reset">Yenilenme: <span data-reset="${esc(resetIso)}" title="${esc(fmtDateTime(resetIso))}">${esc(fmtCountdown(resetIso))}</span></span>` : ''}</div>
-        </div>`;
-      if (pct !== null) quotaHtml += `<div class="bar" data-key="quota-bar" role="img" aria-label="${esc(worstModel.name)} kalan kota: ${esc(fmtPct(pct))}"><i class="${fillClass(pct)}" style="width:${Math.max(0, Math.min(100, pct))}%"></i></div>`;
-      if (q.error) quotaHtml += `<div class="error-box quota-error">${esc(q.error)}</div>`;
-      if (groups.length) {
-        const families = [['argon', 'Argon'], ['gemini', 'Gemini'], ['claude', 'Claude'], ['gpt', 'GPT'], ['other', 'Diğer']];
-        quotaHtml += `<details class="quota-details" data-key="quota-details" open><summary>Model kotaları <span>${groups.length} model</span></summary><div class="model-families">${families.map(([family, label]) => {
-          const models = groups.filter((model) => (families.some(([key]) => key === model.family) ? model.family : 'other') === family);
-          if (!models.length) return '';
-          return `<details class="model-family" data-key="family:${family}" open><summary>${label} <span>${models.length} model</span></summary><div class="groups">${models.map((model) => {
-            const remainingPct = modelPct(model);
-            const modelId = model.model_id || '';
-            return `
-              <div class="group" data-key="${esc(model.id || modelId || model.name)}">
-                <div class="group-top"><span class="group-name" title="${esc(modelId ? `Model ID: ${modelId}` : model.name)}">${esc(model.name)}${modelId ? `<span class="sr-only"> · Model ID: ${esc(modelId)}</span>` : ''}</span><span class="group-value ${toneClass(remainingPct)}"${remainingPct === null ? '' : ` title="Kalan oran: ${esc(model.remaining)}"`}>${remainingPct === null ? 'Kota bildirilmedi' : fmtPct(remainingPct)}</span></div>
-                <div class="group-meta">${model.reset_at ? `<span>Yenilenme: <time datetime="${esc(model.reset_at)}" title="${esc(model.reset_at)}">${esc(fmtDateTime(model.reset_at))}</time> · <span data-reset="${esc(model.reset_at)}">${esc(fmtCountdown(model.reset_at))}</span></span>` : '<span>Yenilenme zamanı bildirilmedi</span>'}</div>
-              </div>`;
-          }).join('')}</div></details>`;
-        }).join('')}</div></details>`;
-      } else if (q.ok) {
-        quotaHtml += `<div class="quota-empty"><span>Model kotası bulunamadı.</span></div>`;
-      }
-      if (q.credits_prompt != null || q.credits_flow != null) {
-        const prompt = q.credits_prompt != null ? `${fmtNum(q.credits_prompt)}${q.monthly_prompt ? ' / ' + fmtNum(q.monthly_prompt) : ''}` : '—';
-        const flow = q.credits_flow != null ? `${fmtNum(q.credits_flow)}${q.monthly_flow ? ' / ' + fmtNum(q.monthly_flow) : ''}` : '—';
-        quotaHtml += `<div class="credits"><span class="credit" title="Kalan / aylık">Prompt <b>${prompt}</b></span><span class="credit" title="Kalan / aylık">Flow <b>${flow}</b></span></div>`;
-      }
+    let summary;
+    if (!q) {
+      summary = `${ring(null, 'Kota okunmadı')}<div class="q-side"><span class="q-label">Kota okunmadı</span><span class="q-meta">“Kotayı oku” ile güncelleyin</span></div>`;
+    } else if (pct === null) {
+      summary = `${ring(null, 'Kota bildirilmedi')}<div class="q-side"><span class="q-label">Kota bildirilmedi</span><span class="q-meta">${knownModels.length}/${q.raw_model_count ?? groups.length} model biliniyor</span></div>`;
     } else {
-      quotaHtml = `<div class="quota-empty"><span>Kota henüz okunmadı. “Kotayı oku” ile güncelleyin.</span></div>`;
+      const resetIso = worstModel.reset_at;
+      summary = `${ring(pct, `${worstModel.name} kalan kota: ${fmtPct(pct)}`)}
+        <div class="q-side">
+          <span class="q-label">En düşük kota</span>
+          <span class="q-model" title="${esc(worstModel.name)}">${esc(worstModel.name)}</span>
+          <span class="q-meta">${resetIso ? `${icon('clock')}<span data-reset="${esc(resetIso)}" title="${esc(fmtDateTime(resetIso))}">${esc(fmtCountdown(resetIso))}</span> sonra yenilenir` : 'Yenilenme bildirilmedi'}</span>
+        </div>`;
     }
 
-    const disabledSwitch = a.active;
+    const familyRows = FAMILIES.map(([family, label]) => {
+      const models = groups.filter((model) => familyOf(model) === family);
+      if (!models.length) return '';
+      const known = models.map(modelPct).filter((v) => v !== null);
+      const min = known.length ? Math.min(...known) : null;
+      return `<div class="fam" data-key="fam:${family}" title="${esc(label)}: ${models.length} model (en düşük)"><span class="fam-name">${esc(label)}</span>${meter(min, `${label}: ${fmtPct(min)}`)}<span class="fam-val ${toneClass(min)}">${min === null ? '—' : esc(fmtPct(min))}</span></div>`;
+    }).join('');
+
+    let detail = '';
+    if (q?.error) detail += `<div class="error-box">${esc(q.error)}</div>`;
+    if (groups.length) {
+      detail += FAMILIES.map(([family, label]) => {
+        const models = groups.filter((model) => familyOf(model) === family);
+        if (!models.length) return '';
+        return `<div class="model-family" data-key="family:${family}"><div class="family-head">${esc(label)}</div>${models.map((model) => {
+          const remainingPct = modelPct(model);
+          const modelId = model.model_id || '';
+          return `
+            <div class="model" data-key="${esc(model.id || modelId || model.name)}">
+              <div class="model-top"><span class="model-name" title="${esc(modelId ? `Model ID: ${modelId}` : model.name)}">${esc(model.name)}</span><span class="model-val ${toneClass(remainingPct)}"${remainingPct === null ? '' : ` title="Kalan oran: ${esc(model.remaining)}"`}>${remainingPct === null ? '—' : esc(fmtPct(remainingPct))}</span></div>
+              ${meter(remainingPct, `${model.name}: ${fmtPct(remainingPct)}`)}
+              <div class="model-meta">${model.reset_at ? `<time datetime="${esc(model.reset_at)}" title="${esc(model.reset_at)}">${esc(fmtDateTime(model.reset_at))}</time> · <span data-reset="${esc(model.reset_at)}">${esc(fmtCountdown(model.reset_at))}</span>` : 'Yenilenme bildirilmedi'}</div>
+            </div>`;
+        }).join('')}</div>`;
+      }).join('');
+    } else if (q?.ok) {
+      detail += '<div class="quota-empty">Model kotası bulunamadı.</div>';
+    }
+    const facts = [`<span>Token<b>${esc(tokenStatus)}</b></span>`, `<span>Antigravity<b>${esc(eligibility)}</b></span>`];
+    if (q?.credits_prompt != null) facts.push(`<span title="Kalan / aylık">Prompt kredisi<b>${fmtNum(q.credits_prompt)}${q.monthly_prompt ? ' / ' + fmtNum(q.monthly_prompt) : ''}</b></span>`);
+    if (q?.credits_flow != null) facts.push(`<span title="Kalan / aylık">Flow kredisi<b>${fmtNum(q.credits_flow)}${q.monthly_flow ? ' / ' + fmtNum(q.monthly_flow) : ''}</b></span>`);
+    detail += `<div class="facts">${facts.join('')}</div>`;
+
     const disabledDelete = a.primary || a.active;
     const deleteTitle = a.primary ? 'Ana hesap silinemez' : a.active ? 'Aktif hesap silinemez; önce başka hesaba geçin' : 'Profili sil';
-    const last = q?.fetched_at ? `son: ${relTime(q.fetched_at)}` : (a.last_used ? `son kullanım: ${relTime(a.last_used)}` : '');
+    const last = q?.fetched_at ? `Güncellendi: ${relTime(q.fetched_at)}` : (a.last_used ? `Son kullanım: ${relTime(a.last_used)}` : 'Hiç okunmadı');
 
     return `
-      <article data-key="${esc(a.name)}" class="account-card${a.active ? ' is-active' : ''}${a.primary ? ' is-primary' : ''}">
-        <div class="account-head" data-key="account-head">
-          <div class="account-title">
-            <h3>${esc(a.label)}</h3>
-            ${a.account_name ? `<div class="login-name">${esc(a.account_name)}</div>` : ''}
-            <div class="account-email">${esc(a.email || '—')}</div>
+      <article data-key="${esc(a.name)}" class="account${a.active ? ' is-active' : ''}${a.primary ? ' is-primary' : ''}">
+        <header class="acct-head" data-key="acct-head">
+          ${avatar(a)}
+          <div class="acct-names">
+            <h3 title="${esc(a.label)}">${esc(a.label)}</h3>
+            <div class="acct-email" title="${esc(a.email || '')}">${esc(a.email || '—')}</div>
           </div>
-          <div class="badges">${badges.join('')}</div>
-        </div>
-        <div class="account-health" data-key="account-health"><span>Token: <b>${esc(tokenStatus)}</b></span><span>Antigravity: <b>${esc(eligibility)}</b></span></div>
-        ${quotaHtml}
-        <div class="account-foot" data-key="account-foot">
-          <div class="account-actions">
-            <button class="btn btn-small ${a.active ? '' : 'btn-primary'}" data-action="switch" data-name="${esc(a.name)}" ${disabledSwitch ? 'disabled' : ''}>${a.active ? 'Aktif' : 'Geç'}</button>
-            <button class="btn btn-small btn-ghost" data-action="refresh-one" data-name="${esc(a.name)}">Kotayı oku</button>
-          </div>
-          <details class="secondary-actions" data-key="secondary-actions"><summary>Diğer işlemler</summary><div class="account-actions">
-            ${a.primary ? '' : `<button class="btn btn-small btn-ghost" data-action="set-primary" data-name="${esc(a.name)}">Ana yap</button>`}
-            <button class="btn btn-small btn-ghost" data-action="rename" data-name="${esc(a.name)}">Yeniden adlandır</button>
-            <button class="btn btn-small btn-danger" data-action="delete" data-name="${esc(a.name)}" ${disabledDelete ? 'disabled' : ''} title="${esc(deleteTitle)}">Sil</button>
-          </div></details>
-          <span class="account-note">${esc(last)}</span>
-        </div>
+          <details class="menu" data-key="menu">
+            <summary class="icon-btn" title="Diğer işlemler" aria-label="Diğer işlemler">${icon('moreV')}</summary>
+            <div class="menu-pop" role="menu">
+              <button role="menuitem" data-action="refresh-one" data-name="${esc(a.name)}">${icon('refresh')}Kotayı oku</button>
+              ${a.primary ? '' : `<button role="menuitem" data-action="set-primary" data-name="${esc(a.name)}">${icon('star')}Ana yap</button>`}
+              <button role="menuitem" data-action="rename" data-name="${esc(a.name)}">${icon('pencil')}Yeniden adlandır</button>
+              <hr>
+              <button role="menuitem" class="danger" data-action="delete" data-name="${esc(a.name)}" ${disabledDelete ? 'disabled' : ''} title="${esc(deleteTitle)}">${icon('trash')}Sil</button>
+            </div>
+          </details>
+        </header>
+        <div class="badges" data-key="badges">${badges.join('')}</div>
+        <div class="acct-summary" data-key="acct-summary">${summary}</div>
+        ${familyRows ? `<div class="fam-list" data-key="fam-list">${familyRows}</div>` : ''}
+        <footer class="acct-foot" data-key="acct-foot">
+          ${a.active
+            ? `<span class="btn btn-tonal is-current" aria-disabled="true">${icon('check')}<span>Kullanımda</span></span>`
+            : `<button class="btn btn-filled" data-action="switch" data-name="${esc(a.name)}">${icon('swap')}<span>Bu hesaba geç</span></button>`}
+          <button class="btn btn-text" data-action="refresh-one" data-name="${esc(a.name)}" data-key="refresh-foot">${icon('refresh')}<span>Kotayı oku</span></button>
+        </footer>
+        <details class="acct-details" data-key="acct-details">
+          <summary><span>${esc(last)}</span><span class="acct-toggle">${groups.length ? `${groups.length} model` : 'Ayrıntılar'}${icon('chevron')}</span></summary>
+          <div class="acct-detail-body">${detail}</div>
+        </details>
       </article>`;
   }
 
@@ -872,7 +937,7 @@
           <div class="modal ${wide ? 'wide' : ''}" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1">
             <div class="modal-head">
               <div><h2 id="modal-title">${esc(title)}</h2>${subtitle ? `<p>${esc(subtitle)}</p>` : ''}</div>
-              <button class="modal-close" aria-label="Kapat">×</button>
+              <button class="icon-btn modal-close" aria-label="Kapat">${icon('x')}</button>
             </div>
             <div class="modal-body">${body}</div>
             <div class="modal-actions">${actionHtml}</div>
@@ -920,7 +985,7 @@
       });
       window.setTimeout(() => {
         if (!modal.isConnected) return;
-        const focusTarget = $('input, button.btn-primary, button', modal);
+        const focusTarget = $('input', modal) || $('.modal-actions .btn-primary', modal) || $('.modal-actions button', modal);
         (focusTarget || modal).focus();
       }, 30);
     });
@@ -1422,6 +1487,15 @@
 
   // ---------- olaylar ----------
 
+  // Açık ⋯ menülerini dışarı tıklayınca veya bir seçimden sonra kapat.
+  document.addEventListener('click', (event) => {
+    const inside = event.target.closest('details.menu');
+    const picked = event.target.closest('.menu-pop [data-action]');
+    $$('details.menu[open]').forEach((menu) => {
+      if (menu !== inside || picked) menu.open = false;
+    });
+  }, true);
+
   document.addEventListener('click', async (event) => {
     const target = event.target.closest('[data-action]');
     if (!target) return;
@@ -1479,40 +1553,45 @@
   for (const id of ['capture-name', 'capture-label']) {
     $(`#${id}`).addEventListener('input', () => state.manualDirty.add(id));
   }
-  for (const [id, key] of [['account-filter', 'filter'], ['account-sort', 'sort']]) {
-    $(`#${id}`).addEventListener('change', (event) => {
-      state[key] = event.target.value;
-      if (state.data) renderAccounts(state.data);
-    });
-  }
+  $('#account-sort').addEventListener('change', (event) => {
+    state.sort = event.target.value;
+    if (state.data) renderAccounts(state.data);
+  });
+  $('#account-filter').addEventListener('click', (event) => {
+    const button = event.target.closest('[data-filter]');
+    if (!button) return;
+    state.filter = button.dataset.filter;
+    $$('[data-filter]', event.currentTarget).forEach((el) => el.setAttribute('aria-checked', String(el === button)));
+    if (state.data) renderAccounts(state.data);
+  });
   const colorPreference = window.matchMedia('(prefers-color-scheme: light)');
-  function applyTheme() {
+  const THEMES = { auto: ['monitor', 'Tema: sistem'], light: ['sun', 'Tema: açık'], dark: ['moon', 'Tema: koyu'] };
+  function currentTheme() {
     const choice = localStorage.getItem('aio.theme') || 'auto';
-    const theme = ['auto', 'light', 'dark'].includes(choice) ? choice : 'auto';
-    document.documentElement.dataset.theme = theme === 'auto' ? colorPreference.matches ? 'light' : 'dark' : theme;
-    $('#theme-select').value = theme;
+    return Object.hasOwn(THEMES, choice) ? choice : 'auto';
   }
-  $('#theme-select').addEventListener('change', (event) => {
-    localStorage.setItem('aio.theme', event.target.value);
+  function applyTheme() {
+    const theme = currentTheme();
+    document.documentElement.dataset.theme = theme === 'auto' ? colorPreference.matches ? 'light' : 'dark' : theme;
+    const button = $('#theme-btn');
+    const [name, label] = THEMES[theme];
+    button.innerHTML = icon(name);
+    button.title = label;
+    button.setAttribute('aria-label', label);
+  }
+  $('#theme-btn').addEventListener('click', () => {
+    const order = ['auto', 'light', 'dark'];
+    const next = order[(order.indexOf(currentTheme()) + 1) % order.length];
+    localStorage.setItem('aio.theme', next);
     applyTheme();
+    toast(THEMES[next][1], 'info', 1600);
   });
   colorPreference.addEventListener('change', applyTheme);
+  hydrateIcons();
   applyTheme();
   $('#search').addEventListener('input', (event) => {
     state.search = event.target.value;
     if (state.data) renderAccounts(state.data);
-  });
-  $('#account-select').addEventListener('change', () => {
-    const active = state.data?.active;
-    const select = $('#account-select');
-    state.selectedAccount = select.value;
-    const button = $('#switch-selected');
-    button.textContent = select.value === active ? 'Aktif' : 'Geç';
-    syncBusy();
-  });
-  $('#switch-selected').addEventListener('click', () => {
-    const name = $('#account-select').value;
-    if (name) switchAccount(name);
   });
 
   document.addEventListener('keydown', (event) => {
